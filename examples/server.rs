@@ -23,4 +23,6 @@ fn main() {
     println!("Client: {}", String::from_utf8_lossy(&msg));
 
     writer.send(b"Hello from server").unwrap();
+    remove_pipe(req).unwrap();
+    remove_pipe(res).unwrap();
 }
