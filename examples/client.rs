@@ -1,7 +1,6 @@
 use rustpipes::*;
 
 fn main() {
-
     #[cfg(unix)]
     let req = "/tmp/rustpipe_req";
     #[cfg(unix)]
@@ -15,9 +14,12 @@ fn main() {
     let mut writer = open_write(req).unwrap();
     let mut reader = open_read(res).unwrap();
 
-    writer.send(b"Hello from client").unwrap();
+    let large_payload = "CLIENT_DATA_CHUNK_".repeat(300).into_bytes();
+    writer.send(&large_payload).unwrap();
 
     let msg = reader.receive().unwrap();
+    let text = String::from_utf8_lossy(&msg);
 
-    println!("Server: {}", String::from_utf8_lossy(&msg));
+    println!("Client received exactly {} bytes.", msg.len());
+    println!("Message Content:\n{}\n", text);
 }
