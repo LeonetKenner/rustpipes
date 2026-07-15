@@ -11,8 +11,17 @@ fn main() {
     #[cfg(windows)]
     let res = r"\\.\pipe\rustpipe_res";
 
-    let mut writer = open_write(req).unwrap();
-    let mut reader = open_read(res).unwrap();
+    let mut writer = PipeBuilder::new(req)
+        .client()
+        .write_only()
+        .build()
+        .unwrap();
+
+    let mut reader = PipeBuilder::new(res)
+        .client()
+        .read_only()
+        .build()
+        .unwrap();
 
     let large_payload = "CLIENT_DATA_CHUNK_".repeat(300).into_bytes();
     writer.send(&large_payload).unwrap();
